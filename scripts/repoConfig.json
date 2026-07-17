@@ -1,7 +1,7 @@
 {
-  "repoName":"UserRepo",
-  "author":"Jeff Kopko",
-  "workshopTitle":"Hugo for Fortinet TECWorkshops",
+  "repoName":"oci-solutions",
+  "author":"Derrick Gooch",
+  "workshopTitle":"Oracle Solution Guide",
   "themeVariant":"CloudCSEMovie",
   "logoBannerText":"FortiHugo",
   "logoBannerSubText":"",
