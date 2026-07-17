@@ -218,6 +218,7 @@ Figure 8: OCI Policy
 
 **Policy note**: The above pictured policy is overly permissive. This is fine for a lab, but **not** recommended for production. Below are the required minimum privileges:
 
+```text
 Allow dynamic-group <group_name> to read compartments in tenancy
 Allow dynamic-group <group_name> to read instances in tenancy
 Allow dynamic-group <group_name> to read vnic-attachments in tenancy
@@ -226,6 +227,7 @@ Allow dynamic-group <group_name> to read public-ips in tenancy
 Allow dynamic-group <group_name> to manage private-ips in tenancy
 Allow dynamic-group <group_name> to manage public-ips in tenancy
 Allow dynamic-group <group_name> to manage vnics in tenancy
+```
 
 ---
 
