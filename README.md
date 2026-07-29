@@ -3,7 +3,7 @@
 
 To view the workshop, please go here: [GitHub Pages Link](https://fortinetcloudcse.github.io/oci-solutions/)
 
-Test
+Another Test
 
 ---
 
