@@ -24,30 +24,30 @@ Unless otherwise stated, we will use regional subnets in OCI. This greatly simpl
 
 ### Subnet Routing Tables
 
-This setup requires a few more tables due to the nature of the architecture. As you can see there are no routes pointing directly to the FortiGate. This is due to NLB handling traffic distribution with the FortiGates as “Backends” in a “Backend Set”.
+The below tables describe the routes needed per subnet, in OCI, based on FortiGate Active/Passive high availability cluster.  Since we are using SDN based failover the static routes will be pointed towards a floating IP shared between the active and passive FortiGates.  During a failover, Oracle will move this IP from the primary to the secondary (new primary).  Note that I have left out the HA routing table.  We don't need to apply a special route table here as all traffic remains local to this subnet and routing between vNICs is handled by the subnet gateway.
 
-Table 1: NLB Subnet Routing Table
+Table 1: Management Subnet Routing Table
 
 | Destination | Target Type | Target | Route Type |
 | --- | --- | --- | --- |
-| 0.0.0.0/0 | Internet Gateway | ebslab-igw | Static |
+| 0.0.0.0/0 | Internet Gateway | sec-serv-igw | Static |
 
 Table 2: Untrust Subnet Routing Table
 
 | Destination | Target Type | Target | Route Type |
 | --- | --- | --- | --- |
-| 0.0.0.0/0 | Internet Gateway | ebslab-igw | Static |
+| 0.0.0.0/0 | Internet Gateway | sec-serv-igw | Static |
 
 Table 3: Trust Subnet Routing Table
 
 | Destination | Target Type | Target | Route Type |
 | --- | --- | --- | --- |
-| 0.0.0.0/0 | Private-IP | &lt;Internal NLB IP&gt; | Static |
+| 0.0.0.0/0 | Private-IP | &lt;Floating IP&gt; | Static |
 | &lt;App 1 VCN CIDR&gt; | Dynamic Routing Gateway | &lt;DRG&gt; | Static |
 | &lt;App n VCN CIDR&gt; | Dynamic Routing Gateway | &lt;DRG&gt; | Static |
 | &lt;On-prem CIDR&gt; | Dynamic Routing Gateway | &lt;DRG&gt; | Static |
 
-As noted here the trust subnet route table points all traffic destined for the Internet towards the internal NLB private IP address. All other routes for any internal services need to be added here, pointing back to the DRG.
+As noted here the trust subnet route table points all traffic destined for the Internet towards the internal Floating IP address. All other routes for any internal services need to be added here, pointing back to the DRG.
 
 ### Spoke VCNs
 
@@ -108,13 +108,13 @@ Table 6: DRG Route Table for App n VCN Attachment
 
 If no VCN Route Table is explicitly defined, then the hidden implicit table is used to provide connectivity to all subnets in the VCN.
 
-In our solution, we will only define a VCN route table for the Security Services VCN attachment. This route will point all traffic inbound from the DRG sent to the internal NLB for distribution to the FortiGates.
+In our solution, we will only define a VCN route table for the Security Services VCN attachment. This route will point all traffic inbound from the DRG sent to the internal floating IP address shared between FortiGates.
 
 Table 7: VCN Route Table for Security Services VCN Attachment
 
 | Destination | Target Type | Next Hop Attachment Type | Route Type |
 | --- | --- | --- | --- |
-| 0.0.0.0/0 | Private IP | &lt;Internal NLB IP&gt; | Static |
+| 0.0.0.0/0 | Private IP | &lt;FortiGate Floating IP&gt; | Static |
 
 ### RPC, VC and IPSec Attachment Route Tables
 
