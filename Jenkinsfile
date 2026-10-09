@@ -11,23 +11,7 @@ void setBuildStatus(String message, String state, String repo_url) {
 pipeline {
     agent any
 
-    environment {
-        REPO_URL = 'https://github.com/FortinetCloudCSE/oci-solutions'
-    }
-
     stages {
-
-       stage('Checkout') {
-            steps {
-              script {
-                // Capture SCM vars explicitly; GIT_URL is only injected into env
-                // by the git plugin's own checkout, which lightweight/API-only
-                // Jenkinsfile fetches skip entirely.
-                def scmVars = checkout scm
-                env.REPO_URL = scmVars.GIT_URL ?: env.REPO_URL
-              }
-            }
-       }
 
        stage('Checking for question/discussion section in content folders'){
             when { expression { false } }
@@ -61,13 +45,19 @@ pipeline {
               }
             }
        }
+
+        stage('Clean workspace') {
+            steps {
+                deleteDir()
+            }
+        }
     }
     post {
      success {
-        setBuildStatus("Build succeeded", "SUCCESS", env.REPO_URL);
+        setBuildStatus("Build succeeded", "SUCCESS", "${GIT_URL}");
      }
      failure {
-        setBuildStatus("Build failed", "FAILURE", env.REPO_URL);
+        setBuildStatus("Build failed", "FAILURE", "${GIT_URL}");
      }
   }
 }
